@@ -2,8 +2,7 @@ from pathlib import Path
 from quart import g, Quart, redirect, render_template, url_for, abort # , request
 from asyncio import sleep as a_sleep
 
-from os import getenv
-# from dotenv import load_dotenv
+from os import getenv#, unsetenv
 from datetime import datetime, timedelta
 import pandas as pd
 
@@ -13,11 +12,15 @@ from graph_maker import graph_maker
 
 # setup
 app = Quart(__name__)
+app.logger.info('Establish logger')
 
 # Environmental Variables for API token, specify during build or in ".env"
-# load_dotenv()
+if __name__ == "__main__":
+    from dotenv import load_dotenv
+    load_dotenv()
 
-# various directories, API settings
+
+# App configuration: various directories, API settings
 app.config.update({
     "pet_data": Path(app.root_path, 'data', 'adopt.parquet'),
     "org_data": Path(app.root_path, 'data', 'organizations.json'),
@@ -26,7 +29,7 @@ app.config.update({
     "client_id":getenv('client_id'),
     "client_secret":getenv('client_secret'),
     "location":getenv('location', 'Minneapolis, Minnesota'),
-    "SERVER_NAME":getenv('server_name', 'localhost:5000')
+    "SERVER_NAME": getenv('server_name', 'localhost:5000'),
 })
 
     ## BACKGROUND / SCHEDULED TASKS 
@@ -106,6 +109,11 @@ async def data_update():
 # load data on startup, check periodically
 @app.before_serving
 async def startup():
+    app.add_background_task(data_update)
+    
+# load data on startup, check periodically
+@app.after_serving
+async def shutdown():
     app.add_background_task(data_update)
     
 # attach data to "G" object for servivng requests
@@ -189,6 +197,9 @@ async def random_pet_page():
 # list of adoption organizations  
 @app.route("/organizations")
 async def org_landing():
+    app.logger.info('INFO')
+    app.logger.warning('WARNING')
+    app.logger.critical('CRIT')
     org, updated = g.org, g.updated
     return await render_template("org_list.html", org=org, updated=updated)
 
@@ -215,4 +226,14 @@ async def error_page(e):
 
     
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.logger.setLevel(10)
+    app.run(debug = True)
+else:
+    app.config.update({"SERVER_NAME": getenv('server_name', 'localhost:8000')})
+    import logging
+    hypercorn_logger = logging.getLogger('hypercorn.error')
+    hypercorn_logger.addHandler(logging.StreamHandler())
+    hypercorn_logger.setLevel(20)
+    app.logger.handlers = hypercorn_logger.handlers
+    app.logger.setLevel(hypercorn_logger.level)
+    
