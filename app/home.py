@@ -26,7 +26,7 @@ app.config.update({
     "client_id":getenv('client_id'),
     "client_secret":getenv('client_secret'),
     "location":getenv('location', 'Minneapolis, Minnesota'),
-    "server_name":getenv('server_name', 'localhost:5000')
+    "SERVER_NAME":getenv('server_name', 'localhost:5000')
 })
 
     ## BACKGROUND / SCHEDULED TASKS 
