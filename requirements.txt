@@ -1,0 +1,14 @@
+et-xmlfile
+hypercorn
+lxml
+matplotlib
+numpy
+openpyxl
+packaging
+pandas
+pyarrow
+python-dotenv
+quart
+requests
+seaborn
+

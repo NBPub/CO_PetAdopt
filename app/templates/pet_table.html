@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}CO Pet Adoptions{% endblock %}
+{% block content %}
+
+<h1>
+  <span class="float-end text-muted fs-6">{{ updated.strftime('%x %X') }}</span>
+  Pet Adoption Table
+</h1>
+<div class="mx-3 mt-3">
+  <div class="row my-3 d-none">
+    <div class="col-3 align-middle"><span class="fw-bold">Download data:</span></div>
+	<div class="col-3"><div class="btn-group-vertical btn-group-sm" role="group">
+	  <button type="button" class="btn btn-danger border-danger-subtle">CSV</button>
+	  <button type="button" class="btn btn-warning border-warning-subtle">XML</button>
+	  <button type="button" class="btn btn-success border-success-subtle">XLSX</button>
+	  <button type="button" class="btn btn-primary border-primary-subtle">Parquet</button>
+	</div></div>
+	<div class="col-3"><div class="btn-group-vertical btn-group-sm my-2" role="group">
+	  <button type="button" class="btn btn-light border-dark-subtle">HTML</button>
+	  <button type="button" class="btn btn-dark border-muted">HTML (formatted)</button>
+	</div></div>
+  </div>	
+  <div class="row rounded bg-dark"><div class="table-responsive" style="max-height:90vh;">
+	  {% include 'tables/all_pets_table.html' %}<br>
+  </div></div>
+</div>
+{% endblock %}
+
+{% block script_additions %}
+{% endblock %}

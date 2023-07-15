@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block title %}{{ org["name"] }}{% endblock %}
+{% block CSS %}
+	h1 {margin-inline-end:30vw;}
+	#logo {position:relative;top:-75px;}
+	hr {width:120vw;position:relative;right:10vw;}
+{% endblock %}
+{% block content %}
+
+<h1>
+  <span class="float-end text-muted fs-6">{{ updated.strftime('%x %X') }}</span>
+  {{ org["name"] }}
+</h1>
+{% if org.photos %}
+  <img id="logo" src="{{ org.photos[0]['full'] }}" class="img-fluid float-end" style="height:110px;" />
+{% endif %}
+  <div class="row mt-3">
+    <a class="me-3 fw-bold" href="mailto:{{ org.email }}">{{ org.email }}</a>
+	  {% if org.phone %}<b>{{ org.phone }}</b>{% endif %}
+	  <span class="mt-2">
+	    <a href="{{ org.website }}" class="btn bg-primary-subtle border-primary btn-sm mx-2 fw-bold">website</a>
+	    {% if org.social_media['facebook'] %}
+		  <a class="mx-1" href="{{ org.social_media['facebook'] }}"><img src="https://cdn2.iconfinder.com/data/icons/social-media-2285/512/1_Facebook_colored_svg_copy-24.png" /></a>	  
+		{% endif %}
+	    {% if org.social_media['twitter'] %}
+		  <a class="mx-1" href="{{ org.social_media['twitter'] }}"><img src="https://cdn2.iconfinder.com/data/icons/social-media-2285/512/1_Twitter_colored_svg-24.png" /></a>
+		{% endif %}
+	    {% if org.social_media['youtube'] %}
+		  <a class="mx-1" href="{{ org.social_media['youtube'] }}"><img src="https://cdn2.iconfinder.com/data/icons/social-media-2285/512/1_Youtube_colored_svg-24.png" /></a>
+		{% endif %}
+	    {% if org.social_media['instagram'] %}
+		  <a class="mx-1" href="{{ org.social_media['instagram'] }}"><img src="https://cdn2.iconfinder.com/data/icons/social-media-2285/512/1_Instagram_colored_svg_1-24.png" /></a>
+		{% endif %}		
+		{% if org.address %}
+		  <b class="float-end fs-4">{{ org.address }}, Oregon</b>
+		{% endif %}	
+	  </span>	  
+  </div>
+  <hr>
+  <div class="row container mt-3 bg-dark text-light ms-3 rounded p-2">
+    <div class="col-xs-1 col-md-5">
+	  <h3>Mission Statement</h3>
+	  <p>{{ org.mission_statement }}</p>
+	  {% if org.photos|length > 2 %}
+		<div id="gallery" class="carousel slide carousel-dark">
+		  <div class="carousel-indicators">
+			{% for i in range(org.photos|length -1) %}
+			  <button type="button" data-bs-target="#gallery" data-bs-slide-to="{{ i }}" {% if i == 0 %} class="active" {% endif %}></button>
+			{% endfor %}
+		  </div>
+		  <div class="carousel-inner">
+			{% for pic in org.photos[1:] %}
+			  <div {% if loop.index == 1 %} class="carousel-item active" {% else %} class="carousel-item"{% endif %}>
+				<a href="{{ pic['full'] }}" target="_blank">
+				  <img src="{{ pic['large'] }}" class="d-block w-100 rounded"  title="{{ org['name'] }} {{ loop.index }}. Click to open in a new tab" />
+				</a>
+			  </div>
+			{% endfor %}
+		  </div>
+		  <button class="carousel-control-prev" type="button" data-bs-target="#gallery" data-bs-slide="prev">
+			<span class="carousel-control-prev-icon"></span>
+			<span class="visually-hidden">Previous</span>
+		  </button>
+		  <button class="carousel-control-next" type="button" data-bs-target="#gallery" data-bs-slide="next">
+			<span class="carousel-control-next-icon"></span>
+			<span class="visually-hidden">Next</span>
+		  </button>
+		</div>
+	  {% elif org.photos|length == 2 %}
+		<a href="{{ org.photos[1]['full'] }}" target="_blank">
+		  <img src="{{ org.photos[1]['large'] }}" class="d-block w-100 rounded"  title="{{ org['name'] }}. Click to open in a new tab" />
+		</a>	    
+	  {% endif %}
+	</div>
+	<div class="col-1"></div>
+	<div class="col-xs-1 col-md-5">
+      <h3>Policy, 
+	    {% if 'url' in org.adoption %}
+		  <a href="{{ org.adoption['url'] }}" class="text-info text-decoration-none">Form</a>
+		{% else %}
+		  Form
+		{% endif %}
+	  </h3>
+	    {% if 'policy' in org.adoption  and org.adoption['policy'] %}
+	      <p>{{ org.adoption['policy']|safe }}</p>
+		{% else %}
+		  <p class="text-danger text-center">Data unavailable, check 
+		  <a class="text-info fw-bold text-decoration-none" href="{{ org.website }}">website</a></p>
+	    {% endif %}
+    </div>
+    <div class="col-xs-1 col-md-5 fw-bold">
+	  {% if cats %}
+	    <ol><a href="{{ url_for('all_cats',org_id=org.name) }}" class="fs-3 ms-5 text-decoration-none" title="Visual list">&#128008;</a>    
+	    {% for ind,cat in cats.items() %}
+		  <li><a href="{{ url_for('pet_page', pet_id=ind) }}">{{ cat }}</a></li>
+		{% endfor %}
+	  </ol>{% endif %}	  	    
+	</div>
+	<div class="col-1"></div>
+    <div class="col-xs-1 col-md-5 fw-bold">
+	  {% if dogs %}
+	    <ol><a href="{{ url_for('all_dogs',org_id=org.name) }}" class="fs-3 ms-5 text-decoration-none" title="Visual list">&#128054;</a>
+	    {% for ind,dog in dogs.items() %}
+		  <li><a href="{{ url_for('pet_page', pet_id=ind) }}">{{ dog }}</a></li>
+		{% endfor %}
+	  </ol>{% endif %}	
+	</div>	
+  </div>
+{% endblock %}
+
+{% block script_additions %}
+{% endblock %}

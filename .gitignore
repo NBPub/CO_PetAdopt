@@ -1,0 +1,9 @@
+venv
+.env
+app/__pycache__
+dev
+app/static/data_exports
+app/static/graphs
+app/templates/tables
+app/templates/app_failure.html
+app/data

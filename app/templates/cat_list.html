@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Cat Adoptions{% endblock %}
+{% block content %}
+
+<h1>
+  <span class="float-end text-muted fs-6">{{ updated.strftime('%x %X') }}</span>
+  Cat Adoptions
+  <span class="badge rounded-pill border border-success text-success bg-success-subtle fs-4 ms-3">{{ cats.shape[0] }}</span>
+  <span class="fs-5 text-muted ms-3">{% if org_id %} {{ catorg['name'].values[0] }} {% endif %}</span>
+</h1>
+<div class="mt-5 row bg-dark rounded">
+  <div class="g-2 g-lg-3 row">
+  {% for i,cat in cats.iterrows() %}
+    <div class="col-xs-1 col-md-4 col-xl-2 mb-sm-0">
+	  <div class="card my-2 border-3" style="border-color:blueviolet;">
+	    {% if cat.pics_thumb.split(' | ')|length > 1 %}
+			<div id="gallery{{i}}" class="carousel slide card-img-top">
+			  <div class="carousel-indicators">
+				{% for i in range(cat.pics_thumb.split(' | ')|length) %}
+				  <button type="button" data-bs-target="#gallery{{i}}" data-bs-slide-to="{{ i }}" {% if i == 0 %} class="active" {% endif %}></button>
+				{% endfor %}
+			  </div>
+			  <div class="carousel-inner">
+				{% for pic in cat.pics_thumb.split(' | ') %}
+				  <div {% if loop.index == 1 %} class="carousel-item active" {% else %} class="carousel-item"{% endif %}>
+					<a href="{{ cat.pics_full.split(' | ')[loop.index-1] }}" target="_blank">
+					  <img src="{{ pic }}" class="d-block w-100 rounded"  title="{{ cat['name'] }} {{ loop.index }}. Click to open in a new tab" />
+					</a>
+				  </div>
+				{% endfor %}
+			  </div>
+			  <button class="carousel-control-prev" type="button" data-bs-target="#gallery{{i}}" data-bs-slide="prev">
+				<span class="carousel-control-prev-icon"></span>
+				<span class="visually-hidden">Previous</span>
+			  </button>
+			  <button class="carousel-control-next" type="button" data-bs-target="#gallery{{i}}" data-bs-slide="next">
+				<span class="carousel-control-next-icon"></span>
+				<span class="visually-hidden">Next</span>
+			  </button>
+			</div>
+		{% elif not cat.pics_thumb %}
+		  <p class="text-center fs-3">&#127922;</p>  
+		{% else %}
+		  <a href="{{ cat.pics_full.split(' | ')[0] }}" target="_blank">
+	        <img src="{{ cat.pics_thumb.split(' | ')[0] }}" class="card-img-top" title="{{ cat['name'] }}. Click to open in a new tab"/>
+		  </a>
+		{% endif %}
+	    <div class="card-body">
+		  <h5 class="card-title text-center text-decoration-underline"> {{ cat['name'] }}</h5>
+		  <div class="row mb-2">
+		    <div class="col-8">
+			  <b>{{ cat.age }} {{ cat.gender }} <span class="fw-normal">{{ cat['size'] }} {{ cat.breed_1 }}</span></b>
+			</div>
+			<div class="col-4">
+			  <a href="{{ catorg.loc[cat.orgID,'website']  }}">
+			    {% if catorg.loc[cat.orgID,'photos'] %}
+			      <img src="{{ catorg.loc[cat.orgID,'photos'][0]['small'] }}" title="{{ catorg.loc[cat.orgID,'name']  }}" class="rounded img-fluid"/>
+			    {% endif %}
+			  </a>			
+			</div>
+		  </div>
+		  <p class="fs-5 text-center">
+		    <a href="{{ cat.URL }}" class="btn bg-primary-subtle border-primary px-3 btn-sm">Adopt</a>	
+			<a href="{{ url_for('pet_page', pet_id = cat.name) }}" class="btn bg-info-subtle border-info btn-sm">Pet Page</a>
+			<a href="{{ url_for('org', org_id = cat.orgID) }}" class="btn bg-warning-subtle border-warning btn-sm">Org Page</a>
+		  </p>
+		  <p class="fw-bold text-center">{{ cat['tags'] }}</p>
+		  <p class="card-text">{% if cat.description %}&nbsp;&nbsp;{{ cat.description.replace('amp;','')|safe }}{% endif %}
+		    <br><span class="text-muted">
+			{% for col in ['spayed_neutered', 'declawed', 'shots_current', 'special_needs', 'house_trained'] %}
+			  {% if cat[col] %}• {{col}} {% endif %}
+			{% endfor %}
+		  </p>		  
+	    </div>
+	  </div>	  
+    </div>
+  {% endfor %}
+  </div>
+</div>
+{% endblock %}
+{% block script_additions %}
+{% endblock %}

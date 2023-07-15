@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+{% block title %}CO Pet Adoptions{% endblock %}
+{% block CSS %}
+	.nav-tabs .nav-link {
+  color: #212529;	
+  background-color: #f8f9fa;
+  border-color: #343a40;
+  font-weight:bold;
+	}
+	.nav-tabs .nav-link.active {
+  color: #90ee90;
+  background-color:#212529;
+  border-color:#dda0dd;
+  border-width: 3px;
+	}
+	#updated { pointer-events:none;user-select:none }
+{% endblock %}
+{% block content %}
+<h1>Central Oregon Pet Adoptions
+<button type="button" class="btn btn-sm bg-{{ indicator }}-subtle border-{{ indicator }} ms-5 text-muted fst-italic" id="updated">
+  <b class="badge rounded-pill text-light bg-{{ indicator }} me-2 p-1" style="font-size:1em">{{ pet_count }}</b> 
+  <span class="mb-1">updated</span> <span class="badge text-{{ indicator }} fw-bold fst-normal" style="font-size:1em">{{ updated }}</span>
+</button>
+</h1>
+<div class="mt-3">
+  <div class="row mx-1">
+    <p class="text-muted mx-5">
+		Organizations are searched every two hours, and those without a website or adoptable pets are not listed.<br>
+	</p>
+	{% include 'tables/home_org_pet_count.html' %}<br>
+  </div>
+  <div class="row my-3 mx-3">
+    <div class="col-xs-1 col-md-5">
+      <p class="fs-5 text-decoration-none">&nbsp;&nbsp;
+	    <a href="{{ url_for('home') }}" class="fw-bold">Central Oregon Pet Adoptions</a> provides local, up-to-date adoptable pet information. 
+		Roll the dice on a <a href="{{ url_for('random_pet_page') }}" class="text-decoration-none fw-bold">random pet</a> or browse a list of 
+		<a href="{{ url_for('all_cats', org_id=None) }}" class="text-decoration-none fw-bold">cats</a>, 
+		<a href="{{ url_for('all_dogs', org_id=None) }}" class="text-decoration-none fw-bold">dogs</a>, or 
+		<a href="{{ url_for('org_landing') }}" class="text-decoration-none fw-bold">adoption organizations</a>.
+		Meet the four oldist listings below.
+		<br> 
+	  </p>
+	</div>
+	<div class="col"></div>
+	<div class="col-xs-1 col-md-5">
+	  <p class="fs-5">&nbsp;&nbsp;
+	    Pet and adoption organization information is provided by <a href="https://www.petfinder.com/" class="text-decoration-none">Petfinder</a>, 
+		and is not exhaustive for the Central Oregon area. For example, 
+		<a class="text-decoration-none fw-bold bg-warning-subtle rounded px-1" href="https://www.hsco.org/adopt">Humane Society</a> listings are not provided as of now.
+	  </p>
+	</div>
+  </div>
+  <div class="pb-5">
+	<nav>
+	  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+		<button class="nav-link" id="nav-tab-1" data-bs-toggle="tab" data-bs-target="#nav-1" type="button" role="tab">Pet Age, Dog Breeds</button>
+		<button class="nav-link" id="nav-tab-2" data-bs-toggle="tab" data-bs-target="#nav-2" type="button" role="tab">Word Clouds</button>
+		<button class="nav-link active" id="nav-tab-3" data-bs-toggle="tab" data-bs-target="#nav-3" type="button" role="tab">Oldest Listings</button>
+	  </div>
+	</nav>
+	<div class="tab-content pb-5 bg-dark rounded" id="nav-tabContent">
+	  <div class="tab-pane fade p-2" id="nav-1" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0"><div class="row align-center">
+		<div class="col-md-4 col-sm-1">
+		  <a href="/static/graphs/home_count_vs_age.png" target="_blank">
+			<img src="/static/graphs/home_count_vs_age.png" title="Pet counts by age. Click to open in a new tab"  class="img-fluid rounded" />
+		  </a>
+		</div>	 
+		<div class="col"></div>
+		<div class="col-md-6 col-sm-1">
+		  <a href="/static/graphs/home_dog_breeds.png" target="_blank">
+			<img src="/static/graphs/home_dog_breeds.png" title="Dog Breeds. Click to open in a new tab" class="img-fluid rounded" />
+		  </a>
+		</div>
+      </div></div>	    
+
+	  <div class="tab-pane fade p-2" id="nav-2" role="tabpanel" aria-labelledby="nav-profile-tab" tabindex="0"><div class="row align-center">	
+		<div class="col-md-4 col-sm-1">
+		  <h3 class="text-center text-light">Pet Tags</h3>
+		  <a href="/static/graphs/home_pet_tags_cloud.png" target="_blank">
+		    <img src="/static/graphs/home_pet_tags_cloud.png" title="Pet tags word cloud. Click to open in a new tab" class="img-fluid rounded" />
+		  </a>
+		</div>
+        <div class="col-md-4 col-sm-1">
+		  <h3 class="text-center text-light">Dog Colors</h3>
+		  <a href="/static/graphs/home_dog_colors_cloud.png" target="_blank">
+		    <img src="/static/graphs/home_dog_colors_cloud.png" title="Dog colors word cloud. Click to open in a new tab" class="img-fluid rounded" />		
+		  </a>
+		</div>
+        <div class="col-md-4 col-sm-1">
+		  <h3 class="text-center text-light">Cat Colors</h3>
+		  <a href="/static/graphs/home_cat_colors_cloud.png" target="_blank">
+		    <img src="/static/graphs/home_cat_colors_cloud.png" title="Cat colors word cloud. Click to open in a new tab" class="img-fluid rounded" />		
+		  </a>
+		</div>		  
+	  </div></div>
+	  <div class="tab-pane fade p-2 show active" id="nav-3" role="tabpanel" aria-labelledby="nav-contact-tab" tabindex="0"><div class="row align-center">
+		  {% for i,pet in pets.iterrows() %}
+			<div class="col-xs-1 col-md-3 mb-sm-0">
+			  <div class="card my-2 border-3 border-danger">
+				{% if pet.pics_thumb.split(' | ')|length > 1 %}
+					<div id="gallery{{i}}" class="carousel slide card-img-top">
+					  <div class="carousel-indicators">
+						{% for i in range(pet.pics_thumb.split(' | ')|length) %}
+						  <button type="button" data-bs-target="#gallery{{i}}" data-bs-slide-to="{{ i }}" {% if i == 0 %} class="active" {% endif %}></button>
+						{% endfor %}
+					  </div>
+					  <div class="carousel-inner">
+						{% for pic in pet.pics_thumb.split(' | ') %}
+						  <div {% if loop.index == 1 %} class="carousel-item active" {% else %} class="carousel-item"{% endif %}>
+							<a href="{{ pet.pics_full.split(' | ')[loop.index-1] }}" target="_blank">
+							  <img src="{{ pic }}" class="d-block w-100 rounded"  title="{{ pet['name'] }} {{ loop.index }}. Click to open in a new tab" />
+							</a>
+						  </div>
+						{% endfor %}
+					  </div>
+					  <button class="carousel-control-prev" type="button" data-bs-target="#gallery{{i}}" data-bs-slide="prev">
+						<span class="carousel-control-prev-icon"></span>
+						<span class="visually-hidden">Previous</span>
+					  </button>
+					  <button class="carousel-control-next" type="button" data-bs-target="#gallery{{i}}" data-bs-slide="next">
+						<span class="carousel-control-next-icon"></span>
+						<span class="visually-hidden">Next</span>
+					  </button>
+					</div>
+				{% elif not pet.pics_thumb %}
+				  <p class="text-center fs-3">{% if pet.species == 'Dog' %}&#128054;{% else %}&#127922;{% endif %}</p>
+				{% else %}
+				  <a href="{{ pet.pics_thumb.split(' | ')[0] }}" target="_blank">
+					<img src="{{ pet.pics_thumb.split(' | ')[0] }}" class="card-img-top" title="{{ pet['name'] }}. Click to open in a new tab"/>
+				  </a>
+				{% endif %}
+				<div class="card-body">
+				  <p class="text-danger fs-6 fw-bold text-end"> {{ pet['updated'].strftime('%x %X') }}</p>
+				  <h5 class="card-title text-center text-decoration-underline">{{ pet['name'] }}</h5>
+				  <div class="row mb-2">
+					<div class="col-8">
+					  <b>
+					    {{ pet.age }} {{ pet.gender }} 
+						<span class="fw-normal">{{ pet['size'] }} {{ pet.breed_1 }}{% if pet.breed_2 %} / {{pet.breed_2}}{% endif %}</span>
+					  </b>
+					</div>
+					<div class="col-4">
+					  <a href="{{ org.loc[pet.orgID,'website']  }}">
+					    {% if org.loc[pet.orgID,'photos'] %}
+						  <img src="{{ org.loc[pet.orgID,'photos'][0]['small'] }}" title="{{ org.loc[pet.orgID,'name']  }}" class="rounded img-fluid"/>
+						{% endif %}
+					  </a>			
+					</div>
+				  </div> 
+				  <p class="fs-5 text-center">
+					<a href="{{ pet.URL }}" class="btn bg-primary-subtle border-primary px-3 btn-sm">Adopt</a>	
+					<a href="{{ url_for('pet_page', pet_id = pet.name) }}" class="btn bg-info-subtle border-info btn-sm">Pet Page</a>
+					<a href="{{ url_for('org', org_id = pet.orgID) }}" class="btn bg-warning-subtle border-warning btn-sm">Org Page</a>
+				  </p>
+				  <p class="fw-bold text-center">{{ pet['tags'] }}</p>
+				  <p class="card-text">{% if pet.description %}&nbsp;&nbsp;{{ pet.description.replace('amp;','')|safe }}{% endif %}
+					<br><span class="text-muted">
+					{% for col in ['spayed_neutered', 'declawed', 'shots_current', 'special_needs', 'house_trained'] %}
+					  {% if pet[col] %}• {{col}} {% endif %}
+					{% endfor %}
+				  </p>		  
+				</div>
+			  </div>	  
+			</div>
+		  {% endfor %}		  
+	  </div></div>
+	</div>
+  </div>
+	<footer class="d-flex flex-wrap justify-content-between align-items center border-top fixed-bottom bg-white" style="font-size:10pt;">
+	  <ul class="text-muted fw-bold justify-content-start ms-1 mt-2 list-unstyled">
+	    <li>
+		  Central Oregon Pet Adoptions
+		  <span class="fw-normal mx-3">Contact organizations directly for adoptions.</span>
+		</li>
+		<li><em class="fw-normal">Adoptable pets via <a href="https://www.petfinder.com/developers/v2/docs/">Petfinder API</a>.
+		  Data integration from <a href="https://rescuegroups.org/services/adoptable-pet-data-api/">RescueGroups.org</a> in progress.
+		</em></li>
+	  </ul>
+	  <a class="link-secondary text-center fw-bold justify-content-center mt-2 me-5" href="https://github.com/NBPub/CO_PetAdopt">
+		<img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" style="height:24px;"/><br>GPLv3</a>	  
+	  <img src="/static/favicon.png" class="justify-content-end mt-3 me-3" style="height:32px;"/>
+	</footer>  
+</div>
+{% endblock %}
+
+{% block script_additions %}
+{% endblock %}

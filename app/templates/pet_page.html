@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}{{ pet["name"] }}{% endblock %}
+{% block content %}
+
+<h1 class="text-center">
+  <span class="float-end text-muted fs-6">{{ updated.strftime('%x %X') }}</span>
+  {{ pet["name"] }}
+	<p class="mx-3 mt-3 fs-6 text-start">
+	  <span class="fw-bold me-3">{{ pet.age }} {{ pet.gender }}</span>
+	  {{ pet['size'] }}, {{ pet.breed_1 }}
+	  {% if pet.species == 'Dog' and pet.breed_2 %}
+	    / {{ pet.breed_2 }}
+	  {% endif %}
+	  <span class="mx-5 fs-3">{% if pet.species == 'Dog' %}&#128054;{% else %}&#128008;{% endif %}</span>
+	<span class="">
+	  {% if pet.coat %}{{ pet.coat }} coat {% endif %} 
+	  {% if pet.colors %}| {{ pet.colors }}{% endif %} 
+	</span>
+	</p>  
+
+</h1>
+<hr /><br />
+<div class="mx-3 bg-dark text-light p-3 rounded">
+  <p class="text-success text-end fs-6"> {{ pet.updated[:-5].replace('T',' ') }}</p>
+  <div class="row text-center mb-3 fs-5 fw-bold">
+    <p>
+	  <a class="btn bg-info-subtle border-info text-dark mx-2" href="{{ petorg.website }}">{{ pet.org }}</a> 
+	  <a class="btn bg-warning-subtle border-warning text-dark" href="{{ url_for('org', org_id=pet.orgID) }}">Organization</a>
+	</p>
+	<p class="text-warning">{{ pet.tags.replace(' | ',', ') }}</p>
+  </div>
+  <div class="row mt-3">
+    <div class="col-xs-1 col-md-4">
+	  <p class="fs-4">
+	    {% if pet.description %}&emsp;{{ pet.description.replace('amp;','')|safe}}{% else %}No Description!{% endif %}<br>
+	    
+		<a href="{{ pet.URL }}" class="btn bg-primary-subtle border-primary text-dark m-3 fw-bold">see more</a>
+		
+		<ul class="my-5"><span class="fw-bold fs-5">Attributes</span>
+		  <li>{% if pet.spayed_neutered %}&#10004;{% else %}&#10060;{% endif %} Spayed/Neutered</li>
+		  <li>{% if pet.declawed %}&#10004;{% else %}&#10060;{% endif %} Declawed</li>
+		  <li>{% if pet.shots_current %}&#10004;{% else %}&#10060;{% endif %} Shots up to date</li>
+		  {% if pet.special_needs %}<li class="fst-italic">Special Needs</li>{% endif %}
+		  {% if pet.house_trained %}<li class="fst-italic">House Trained</li>{% endif %}
+		</ul>
+		
+		<ul><span class="fw-bold fs-5">Environment</span>
+		  <li>{% if pet.env_children %}&#10004;{% else %}&#10060;{% endif %} Children</li>
+		  <li>{% if pet.env_dogs %}&#10004;{% else %}&#10060;{% endif %} Dogs</li>
+		  <li>{% if pet.env_cats %}&#10004;{% else %}&#10060;{% endif %} Cats</li>
+		</ul>
+	  </p>
+	</div>
+	<div class="col-1"></div>
+	<div class="col-xs-1 col-md-6">
+	  {% if pet.pics_full.split(' | ')|length > 1 %}
+		<div id="gallery" class="carousel slide">
+		  <div class="carousel-indicators">
+			{% for i in range(pet.pics_full.split(' | ')|length) %}
+			  <button type="button" data-bs-target="#gallery" data-bs-slide-to="{{ i }}" {% if i == 0 %} class="active" {% endif %}></button>
+			{% endfor %}
+		  </div>
+		  <div class="carousel-inner">
+			{% for pic in pet.pics_full.split(' | ') %}
+			  <div {% if loop.index == 1 %} class="carousel-item active" {% else %} class="carousel-item"{% endif %}>
+				<a href="{{ pic }}" target="_blank">
+				  <img src="{{ pic }}" class="d-block w-100 rounded"  title="{{ pet['name'] }} {{ loop.index }}. Click to open in a new tab" />
+				</a>
+			  </div>
+			{% endfor %}
+		  </div>
+		  <button class="carousel-control-prev" type="button" data-bs-target="#gallery" data-bs-slide="prev">
+			<span class="carousel-control-prev-icon"></span>
+			<span class="visually-hidden">Previous</span>
+		  </button>
+		  <button class="carousel-control-next" type="button" data-bs-target="#gallery" data-bs-slide="next">
+			<span class="carousel-control-next-icon"></span>
+			<span class="visually-hidden">Next</span>
+		  </button>
+		</div>
+	  {% elif not pet.pics_full %}
+		<p class="text-danger fw-bold text-center">No Photos!</p>
+	  {% else %}
+		<a href="{{ pet.pics_full.split(' | ')[0] }}" target="_blank">
+		  <img src="{{ pet.pics_full.split(' | ')[0] }}" class="d-block w-100 rounded"  title="{{ pet['name'] }}. Click to open in a new tab" />
+		</a>   
+	  {% endif %}
+	</div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script_additions %}
+{% endblock %}<h1 class="char Zyyy U1F517" data-text="🔗">
+🔗
+</h1>

@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Dog Adoptions{% endblock %}
+{% block content %}
+
+<h1>
+  <span class="float-end text-muted fs-6">{{ updated.strftime('%x %X') }}</span>
+  Dog Adoptions
+  <span class="badge rounded-pill border border-success text-success bg-success-subtle fs-4 ms-3">{{ dogs.shape[0] }}</span>
+  <span class="fs-5 text-muted ms-3">{% if org_id %} {{ dogorg['name'].values[0] }} {% endif %}</span>
+</h1>
+<div class="mt-5 row bg-dark rounded">
+  <div class="row g-2 g-lg-3">  
+  {% for i,dog in dogs.iterrows() %}
+    <div class="col-xs-1 col-md-4 col-xl-3 mb-sm-0">
+	  <div class="card my-2 border-3 border-success">
+	    {% if dog.pics_thumb.split(' | ')|length > 1 %}
+			<div id="gallery{{i}}" class="carousel slide card-img-top">
+			  <div class="carousel-indicators">
+				{% for i in range(dog.pics_thumb.split(' | ')|length) %}
+				  <button type="button" data-bs-target="#gallery{{i}}" data-bs-slide-to="{{ i }}" {% if i == 0 %} class="active" {% endif %}></button>
+				{% endfor %}
+			  </div>
+			  <div class="carousel-inner">
+				{% for pic in dog.pics_thumb.split(' | ') %}
+				  <div {% if loop.index == 1 %} class="carousel-item active" {% else %} class="carousel-item"{% endif %}>
+					<a href="{{ dog.pics_full.split(' | ')[loop.index-1] }}" target="_blank">
+					  <img src="{{ pic }}" class="d-block w-100 rounded"  title="{{ dog['name'] }} {{ loop.index }}. Click to open in a new tab" />
+					</a>
+				  </div>
+				{% endfor %}
+			  </div>
+			  <button class="carousel-control-prev" type="button" data-bs-target="#gallery{{i}}" data-bs-slide="prev">
+				<span class="carousel-control-prev-icon"></span>
+				<span class="visually-hidden">Previous</span>
+			  </button>
+			  <button class="carousel-control-next" type="button" data-bs-target="#gallery{{i}}" data-bs-slide="next">
+				<span class="carousel-control-next-icon"></span>
+				<span class="visually-hidden">Next</span>
+			  </button>
+			</div>
+		{% elif not dog.pics_thumb %}
+		  <p class="text-center fs-3">&#128054;</p>
+		{% else %}
+		  <a href="{{ dog.pics_full.split(' | ')[0] }}" target="_blank">
+	        <img src="{{ dog.pics_thumb.split(' | ')[0] }}" class="card-img-top" title="{{ dog['name'] }}. Click to open in a new tab"/>
+		  </a>
+		{% endif %}
+	    <div class="card-body">
+		  <h5 class="card-title text-center text-decoration-underline"> {{ dog['name'] }}</h5>
+		  <div class="row mb-2">
+		    <div class="col-8">
+			  <b>{{ dog.age }} {{ dog.gender }} <span class="fw-normal">{{ dog['size'] }} {{ dog.breed_1 }}{% if dog.breed_2 %} / {{dog.breed_2}}{% endif %}
+			  </span></b>
+			</div>
+			<div class="col-4">
+			  <a href="{{ dogorg.loc[dog.orgID,'website']  }}">
+			    {% if dogorg.loc[dog.orgID,'photos'] %}
+			      <img src="{{ dogorg.loc[dog.orgID,'photos'][0]['small'] }}" title="{{ dogorg.loc[dog.orgID,'name']  }}" class="rounded img-fluid"/>
+			    {% endif %}
+			  </a>			
+			</div>
+		  </div> 
+		  <p class="fs-5 text-center">
+		    <a href="{{ dog.URL }}" class="btn bg-primary-subtle border-primary btn-sm px-3">Adopt</a>	
+			<a href="{{ url_for('pet_page', pet_id = dog.name) }}" class="btn bg-info-subtle border-info btn-sm">Pet Page</a>
+			<a href="{{ url_for('org', org_id = dog.orgID) }}" class="btn bg-warning-subtle border-warning btn-sm">Org Page</a>
+		  </p>
+		  <p class="fw-bold text-center">{{ dog['tags'] }}</p>
+		  <p class="card-text">{% if dog.description %}&nbsp;&nbsp;{{ dog.description.replace('amp;','')|safe }}{% endif %}
+		    <br><span class="text-muted">
+			{% for col in ['spayed_neutered', 'declawed', 'shots_current', 'special_needs', 'house_trained'] %}
+			  {% if dog[col] %}• {{col}} {% endif %}
+			{% endfor %}
+		  </p>		  
+	    </div>
+	  </div>	  
+    </div>
+  {% endfor %}
+  </div>
+</div>
+{% endblock %}
+{% block script_additions %}
+{% endblock %}
