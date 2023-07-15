@@ -3,7 +3,7 @@ from quart import g, Quart, redirect, render_template, url_for, abort # , reques
 from asyncio import sleep as a_sleep
 
 from os import getenv
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 from datetime import datetime, timedelta
 import pandas as pd
 
@@ -15,7 +15,7 @@ from graph_maker import graph_maker
 app = Quart(__name__)
 
 # Environmental Variables for API token, specify during build or in ".env"
-load_dotenv()
+# load_dotenv()
 
 # various directories, API settings
 app.config.update({
@@ -25,7 +25,7 @@ app.config.update({
     "graphs":Path(app.root_path, 'static', 'graphs'),
     "client_id":getenv('client_id'),
     "client_secret":getenv('client_secret'),
-    "location":getenv('location', 97701),
+    "location":getenv('location', 'Minneapolis, Minnesota'),
     "SERVER_NAME":getenv('server_name', 'localhost:5000')
 })
 
