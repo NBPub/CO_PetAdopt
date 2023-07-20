@@ -83,12 +83,7 @@ async def _use_data(fresh_data):
             
    
 # check data for staleness
-async def _check_data(updated):
-    app.logger.info('updated')
-    app.logger.info(updated.strftime('%x %X'))
-    app.logger.info('now')
-    app.logger.info(datetime.now().strftime('%x %X'))
-    
+async def _check_data(updated):    
     if not updated or datetime.now() - updated > timedelta(hours=3):
         app.logger.info('Data check: refreshing old data') if updated else \
         app.logger.info('Application startup, first data request')
