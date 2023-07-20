@@ -18,10 +18,10 @@ async def age_count(adopt, updated, params, path, url_stamp):
                      palette=['purple','green'])
         plt.ylabel('Pet Age')
         plt.xlabel('Adoptable Pets')
-        plt.title('Pets by Age')
-        plt.text(plt.xlim()[1], plt.ylim()[1]-0.22, updated, 
+        plt.title('Pets by Age', color='lightgreen')
+        plt.text(plt.xlim()[1], plt.ylim()[1]-0.3, updated, 
                  color='khaki', ha='right', va='top', size='small')
-        plt.text(plt.xlim()[0], plt.ylim()[1]-0.22, url_stamp, 
+        plt.text(np.average(plt.xlim()), plt.ylim()[1]-0.3, url_stamp, 
                  color='salmon', ha='right', va='top', size='small')
         plt.savefig(Path(path,'home_count_vs_age.png'))
         plt.close()    
@@ -60,12 +60,11 @@ columns = ['count'])
         plt.ylabel('Primary')
         plt.xlabel(\
 f'Secondary ({dogs.breed_2.notnull().sum()} out of {dogs.shape[0]} dogs)')
-        plt.title('Dog Breeds', color='lightgreen', 
-                  fontweight='bold')
-        plt.text(plt.xlim()[1], plt.ylim()[1]-1, updated, color='khaki',
+        plt.title('Dog Breeds', color='lightgreen')
+        plt.text(plt.xlim()[1]+1, plt.ylim()[1]-1.25, updated, color='khaki',
                  ha='right', va='top')
-        plt.text(plt.xlim()[0], plt.ylim()[1]-1, url_stamp, color='salmon',
-                 ha='right', va='top')        
+        plt.text(plt.xlim()[0]-1.5, plt.ylim()[1]-1.25, url_stamp, color='salmon',
+                 ha='center', va='top')        
         plt.text(plt.xlim()[0]*1.1, plt.ylim()[0]*1.11, 
                  f"Top 3 no secondary breed: \n{top3txt1}", 
                  color='#7fff00', ha='right', va='top')

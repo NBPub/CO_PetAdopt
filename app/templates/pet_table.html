@@ -3,7 +3,6 @@
 {% block content %}
 
 <h1>
-  <span class="float-end text-muted fs-6">{{ updated.strftime('%x %X') }}</span>
   Pet Adoption Table
 </h1>
 <div class="mx-3 mt-3">
@@ -15,10 +14,11 @@
 	  <a target="_blank" title="Raw XLSX export." href="{{ url_for('download_table', extension='xlsx') }}" class="btn btn-success border-success-subtle">XLSX</a>
 	  <a target="_blank" title="Raw Parquet export." href="{{ url_for('download_table', extension='parquet') }}" class="btn btn-primary border-primary-subtle">Parquet</a>
 	</div></div>
-	<div class="col"><div class="btn-group-vertical btn-group-sm my-2" role="group">
-	  <p class="fw-bold">Download data:</p>
+	<div class="col"><div class="btn-group-vertical btn-group-sm" role="group">
+	  <span class="fw-bold mb-1">Download data:</span>
 	  <a target="_blank" title="Raw HTML export." href="{{ url_for('download_table', extension='html') }}" class="btn btn-light border-dark-subtle">HTML</a>
 	  <a target="_blank" title="As seen on this page. Uses Bootstrap classes." href="{{ url_for('download_table', extension='html_f') }}" class="btn btn-dark border-muted">HTML (formatted)</a>
+	  <span class="text-muted fs-6 mt-2">{{ updated.strftime('%x %X') }}</span>
 	</div></div>
   </div>	
   <div class="row rounded bg-dark"><div class="table-responsive" style="max-height:90vh;">

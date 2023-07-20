@@ -15,6 +15,7 @@ from graph_maker import graph_maker
 app = Quart(__name__)
 app.logger.info('Establish logger')
 
+
 # Environmental Variables for API token, specify during build or in ".env"
 load_dotenv() 
 
@@ -84,7 +85,7 @@ async def _use_data(fresh_data):
    
 # check data for staleness
 async def _check_data(updated):    
-    if not updated or datetime.now() - updated > timedelta(hours=3):
+    if not updated or datetime.now() - updated > timedelta(hours=2):
         app.logger.info('Data check: refreshing old data') if updated else \
         app.logger.info('Application startup, first data request')
         success = await _fetch_data(False)    
@@ -116,10 +117,10 @@ async def attach_data():
     # Routes
 # Home Page, tabular breakdown, welcome, oldest listings / graphs / wordclouds
 @app.route("/")
-@app.route("/home")
+@app.route("/home/")
 async def home():
     org, adopt, updated = g.org, g.adopt, g.updated
-    indicator = 'success' if datetime.now() - updated < timedelta(hours=13) \
+    indicator = 'success' if datetime.now() - updated < timedelta(hours=5) \
                 else 'danger'
     updated = updated.strftime('%x %X')
     pet_count = adopt.shape[0]
@@ -130,7 +131,7 @@ async def home():
                                  pet_count=pet_count)
 
 # all pet data, styled table. link to downloads
-@app.route("/table")
+@app.route("/table/")
 async def pet_table():
     updated = g.updated
     return await render_template("pet_table.html", updated=updated)
@@ -160,7 +161,7 @@ problem persists.')
     attachment_filename = f"adoptions_{updated.strftime('%xT%X')}.{extension}")
 
 # list of cats, option to filter by orgID    
-@app.route("/pets/cats", defaults={'org_id':None})
+@app.route("/pets/cats/", defaults={'org_id':None})
 @app.route("/pets/cats/<org_id>")
 async def all_cats(org_id):
     org, adopt, updated = g.org, g.adopt, g.updated
@@ -176,7 +177,7 @@ async def all_cats(org_id):
                                   updated=updated, org_id=org_id)
 
 # list of dogs, option to filter by orgID
-@app.route("/pets/dogs", defaults={'org_id':None})
+@app.route("/pets/dogs/", defaults={'org_id':None})
 @app.route("/pets/dogs/<org_id>")
 async def all_dogs(org_id):
     org, adopt, updated = g.org, g.adopt, g.updated
@@ -203,14 +204,14 @@ async def pet_page(pet_id):
                                   updated=updated)
 
 # Random Pet Page, redirect after random sample
-@app.route("/pets/random")
+@app.route("/pets/random/")
 async def random_pet_page():
     adopt = g.adopt
     choice = adopt.sample(1).index[0]
     return redirect(url_for('pet_page',pet_id=choice))
     
 # list of adoption organizations  
-@app.route("/organizations")
+@app.route("/organizations/")
 async def org_landing():
     org, updated = g.org, g.updated
     return await render_template("org_list.html", org=org, updated=updated)
@@ -224,16 +225,16 @@ async def org(org_id):
         abort(404, description="Specified OrganizationID does not exist.")
     
     org = org.loc[org_id, :]
-    cats = adopt[(adopt.orgID == org_id) & (adopt.species == 'Cat')]
-    cats = {ind:cats.loc[ind,'name'] for ind in cats.index}
-    dogs = adopt[(adopt.orgID == org_id) & (adopt.species == 'Dog')]
-    dogs = {ind:dogs.loc[ind,'name'] for ind in dogs.index}
+    cats = adopt[(adopt.orgID == org_id) & (adopt.species == 'Cat')].sort_values('updated')
+    cats = {ind:(cats.loc[ind,'name'], cats.loc[ind,'updated'].date()) for ind in cats.index}
+    dogs = adopt[(adopt.orgID == org_id) & (adopt.species == 'Dog')].sort_values('updated')
+    dogs = {ind:(dogs.loc[ind,'name'], dogs.loc[ind,'updated'].date()) for ind in dogs.index}
     del adopt
     return await render_template("org_page.html", org=org, dogs=dogs, cats=cats,
                                   updated=updated)
 
 # ping page, keep server alive
-@app.route("/ping")
+@app.route("/ping/")
 async def ping_page():
     return '=^..^='
 

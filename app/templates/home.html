@@ -13,19 +13,21 @@
   border-color:#dda0dd;
   border-width: 3px;
 	}
-	#updated { pointer-events:none;user-select:none }
+	#updated { pointer-events:none;user-select:none;}
+	#footer-img { height:32px; }
+	footer {font-size:10pt;}
 {% endblock %}
 {% block content %}
 <h1>Central Oregon Pet Adoptions
 <button type="button" class="btn btn-sm bg-{{ indicator }}-subtle border-{{ indicator }} ms-5 text-muted fst-italic" id="updated">
-  <b class="badge rounded-pill text-light bg-{{ indicator }} me-2 p-1" style="font-size:1em">{{ pet_count }}</b> 
-  <span class="mb-1">updated</span> <span class="badge text-{{ indicator }} fw-bold fst-normal" style="font-size:1em">{{ updated }}</span>
+  <b class="badge rounded-pill text-light bg-{{ indicator }} py-1 px-2" style="font-size:1em">{{ pet_count }}</b> 
+  <span class="badge text-muted">updated</span><span class="badge text-{{ indicator }} fw-bold fst-normal" style="font-size:1em">{{ updated }}</span>
 </button>
 </h1>
 <div class="mt-3">
-  <div class="row mx-1">
+  <div class="col mx-1">
     <p class="text-muted mx-5">
-		Organizations are searched every two hours, and those without a website or adoptable pets are not listed.<br>
+		Organizations are updated periodically, and those without a website or adoptable pets are not listed.<br>
 	</p>
 	{% include 'tables/home_org_pet_count.html' %}<br>
   </div>
@@ -167,8 +169,8 @@
 	  </div></div>
 	</div>
   </div>
-	<footer class="d-flex flex-wrap justify-content-between align-items center border-top fixed-bottom bg-white" style="font-size:10pt;">
-	  <div class="d-none d-sm-block">
+	<footer class="d-flex flex-wrap justify-content-between align-items center border-top fixed-bottom bg-white">
+	  <div class="d-none d-md-block">
 	  <ul class="text-muted fw-bold justify-content-start ms-1 mt-2 list-unstyled">
 	    <li>
 		  Central Oregon Pet Adoptions
@@ -181,7 +183,8 @@
 	  </div>
 	  <a class="link-secondary text-center fw-bold justify-content-center mt-2 me-5" href="https://github.com/NBPub/CO_PetAdopt">
 		<img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" style="height:24px;"/><br>GPLv3</a>	  
-	  <img src="/static/favicon.png" class="justify-content-end mt-3 me-3" style="height:32px;"/>
+	  <img src="{{ url_for('static', filename='favicon.png') }}" class="justify-content-end mt-3 me-3" id="footer-img"
+	  onmouseover="this.src='{{ url_for('static', filename='dog.png') }}'" onmouseout="this.src='{{ url_for('static', filename='favicon.png') }}'"/>
 	</footer>  
 </div>
 {% endblock %}

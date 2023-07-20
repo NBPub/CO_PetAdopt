@@ -49,3 +49,16 @@ cd app && hypercorn home:app -b 0.0.0.0:10000 --log-file="-" --access-logformat=
  - [DejaVuSans Font](https://dejavu-fonts.github.io/)
  - Petfinder API
  - Bootstrap
+ 
+## Docs for L8R
+
+### EV Table
+
+
+| Name | Example | Description, Specifications |
+| client_id | abcdefg123456 | -- |
+| client_secret | 123456abcdefg | -- |
+| location | 90210 | -- |
+| TZ |America/Los_Angeles | Valid TZ identifier https://en.wikipedia.org/wiki/List_of_tz_database_time_zones |
+| PORT | 10000 | -- |
+| PYTHON_VERSION | 3.11.2 | -- |

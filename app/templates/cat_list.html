@@ -9,18 +9,18 @@
   <span class="float-end text-muted fs-6">{{ updated.strftime('%x %X') }}</span>
   Cat Adoptions
   <span class="badge rounded-pill border border-success text-success bg-success-subtle fs-4 ms-3">{{ cats.shape[0] }}</span>
-  <span class="fs-5 text-muted ms-3">{% if org_id %} {{ catorg['name'].values[0] }} {% endif %}</span>
+  <span class="fs-5 text-muted ms-3">{% if org_id %} {{ catorg['name'].values[0] }}, {{catorg['address'].values[0] }}{% endif %}</span>
 </h1>
 
-<div class="btn-group my-2">
+<div class="overflow-x-auto"><div class="btn-group my-2">
 {% if org_id %}
     <a href="{{ url_for('all_cats') }}" title="{{ catorg['name'].values[0] }}. Click to restore full list" class="btn btn-sm bg-info-subtle border-info fw-bold">{{ catorg.index[0] }}</a>
 {% elif catorg.index|length > 1 %}
-  {% for org in catorg.index %} 
+  {% for org in catorg.index.sort_values() %} 
     <a href="{{ url_for('all_cats', org_id=org) }}" class="btn btn-sm bg-warning-subtle border-warning" title="{{ catorg.loc[org,'name'] }}">{{ org }}</a>
   {% endfor %}
 {% endif %}
-</div>
+</div></div>
 
 <div class="mt-3 row bg-dark rounded">
   <div class="g-2 g-lg-3 row">

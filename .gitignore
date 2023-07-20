@@ -1,7 +1,9 @@
 venv
 .env
-app/__pycache__
 dev
+app/__pycache__
+app/local.py
+app/graph_tester.py
 app/static/data_exports
 app/static/graphs
 app/templates/tables
