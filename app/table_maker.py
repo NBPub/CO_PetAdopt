@@ -93,8 +93,3 @@ async def table_maker(orgs, adopt, save_path, root_path, table_url, logger):
     await home_table(orgs, adopt, save_path)
     # 3) Big Table - all pets
     await big_table(orgs, adopt, save_path, table_url)
-
-
-
-
-    

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}CO Pet Adoptions{% endblock %}
+{% block title %}Pet Adoption Table{% endblock %}
 {% block content %}
 
 <h1>
@@ -7,17 +7,18 @@
   Pet Adoption Table
 </h1>
 <div class="mx-3 mt-3">
-  <div class="row my-3 d-none">
-    <div class="col-3 align-middle"><span class="fw-bold">Download data:</span></div>
-	<div class="col-3"><div class="btn-group-vertical btn-group-sm" role="group">
-	  <button type="button" class="btn btn-danger border-danger-subtle">CSV</button>
-	  <button type="button" class="btn btn-warning border-warning-subtle">XML</button>
-	  <button type="button" class="btn btn-success border-success-subtle">XLSX</button>
-	  <button type="button" class="btn btn-primary border-primary-subtle">Parquet</button>
+  <div class="row row-cols-auto my-3">
+    <div class="col"></div>
+	<div class="col"><div class="btn-group-vertical btn-group-sm" role="group">
+	  <a target="_blank" title="Raw CSV export." href="{{ url_for('download_table', extension='csv') }}" class="btn btn-danger border-danger-subtle">CSV</a>
+	  <a target="_blank" title="Raw XML export." href="{{ url_for('download_table', extension='xml') }}" class="btn btn-warning border-warning-subtle">XML</a>
+	  <a target="_blank" title="Raw XLSX export." href="{{ url_for('download_table', extension='xlsx') }}" class="btn btn-success border-success-subtle">XLSX</a>
+	  <a target="_blank" title="Raw Parquet export." href="{{ url_for('download_table', extension='parquet') }}" class="btn btn-primary border-primary-subtle">Parquet</a>
 	</div></div>
-	<div class="col-3"><div class="btn-group-vertical btn-group-sm my-2" role="group">
-	  <button type="button" class="btn btn-light border-dark-subtle">HTML</button>
-	  <button type="button" class="btn btn-dark border-muted">HTML (formatted)</button>
+	<div class="col"><div class="btn-group-vertical btn-group-sm my-2" role="group">
+	  <p class="fw-bold">Download data:</p>
+	  <a target="_blank" title="Raw HTML export." href="{{ url_for('download_table', extension='html') }}" class="btn btn-light border-dark-subtle">HTML</a>
+	  <a target="_blank" title="As seen on this page. Uses Bootstrap classes." href="{{ url_for('download_table', extension='html_f') }}" class="btn btn-dark border-muted">HTML (formatted)</a>
 	</div></div>
   </div>	
   <div class="row rounded bg-dark"><div class="table-responsive" style="max-height:90vh;">

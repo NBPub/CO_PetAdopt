@@ -8,6 +8,7 @@ from wordcloud import WordCloud
 
 pd.options.mode.chained_assignment = None
 
+
 # 1) Cat/Dog count vs Age
 async def age_count(adopt, updated, params, path, url_stamp):    
     with mpl.rc_context(params):

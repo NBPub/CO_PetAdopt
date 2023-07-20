@@ -2,9 +2,10 @@ import pandas as pd
 import requests
 from datetime import datetime, timedelta
 
+
 # Request Authorization token for API calls, lasts one hour
 async def token_request(client_id, client_secret, logger):
-    URL = 'https://api.petfinder.com/v2/oauth2/token'   
+    URL = 'https://api.petfinder.com/v2/oauth2/token'
     params = {  # authorization, time marker for expiry
     'grant_type':'client_credentials',
     'client_id': client_id,
@@ -25,14 +26,14 @@ async def token_request(client_id, client_secret, logger):
 status code: %s', r.status_code)
         try: # successful, but bad, request. provide error message
             err = r.json()
-            logger.warning('%s: %s', err['title'], err['hint'])
+            logger.warning('\t%s: %s', err['title'], err['hint'])
         except:
             pass
         token = r.status_code      
     return token
 
 
-# Use token to get list of organizations, then list of pets in those
+# Get list of organizations in specified location, then list of pets from orgs
 async def petfinder_request(token, org_path, adopt_path, location, logger):
     # Make folder if needed
     org_path.parent.mkdir(exist_ok=True)
@@ -69,20 +70,29 @@ status code: %s', r.status_code)
     URL = 'https://api.petfinder.com/v2/animals?'
     params = {'organization':','.join(organizations.index), 'status':'adoptable',
               'page':1, 'limit':100}    
-    full = False
     animals = []
+    failcount = 0 # prevent continous failed requests, allow up to 5
     
     # Max 100 pets returned per request, repeat until all pets added
-    while not full and datetime.now() < token['expire_time']:
+    while datetime.now() < token['expire_time']:
         URL = f"{URL}{'&'.join([f'{key}={val}' for key,val in params.items()])}"
         r = requests.get(URL, headers=auth)
+        
         if r.status_code !=200:
             logger.warning('Failed retrieving pets from petfinder, Page %s. \
-status code: %s', params["page"], r.status_code)
+status code: %s', params["page"], r.status_code)            
+            if params['page'] == 0:
+                logger.warning('Terminating Petfinder requests')
+                break
+            failcount += 1
+            logger.warning('%s out of 5 allowed failures', failcount)
             continue
-        full = True if len(r.json()['animals']) < 100 else False
+        
         animals.extend(r.json()['animals'])
-        params['page'] += 1
+        params['page'] += 1       
+        if len(r.json()['animals']) < 100 or failcount > 4:
+            break
+    
     logger.info('%s adoptable pets found,', len(animals))
     
     # return empty for failed requests

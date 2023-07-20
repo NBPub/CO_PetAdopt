@@ -19,8 +19,8 @@
 		    <u class="float-end fs-6 text-muted mt-2">{{ organization.address }}</u>
 		  </h4>
 		  <p class="fs-5">
-		    <a class="text-decoration-none text-dark" href="{{ url_for('all_dogs', org_id=organization.name) }}">{{ organization.Dog|int }} &#128054</a> | 
-			<a class="text-decoration-none text-dark" href="{{ url_for('all_cats', org_id=organization.name) }}"> {{ organization.Cat|int }} &#128008;</a>
+		    <a title="{{ organization['name'] }} dogs" class="text-decoration-none text-dark" href="{{ url_for('all_dogs', org_id=organization.name) }}">{{ organization.Dog|int }} &#128054</a> | 
+			<a title="{{ organization['name'] }} cats" class="text-decoration-none text-dark" href="{{ url_for('all_cats', org_id=organization.name) }}"> {{ organization.Cat|int }} &#128008;</a>
 		    <a href="{{ organization.website }}" class="btn bg-primary-subtle border-primary btn-sm mx-1">Website</a>	
 			<a href=" {{ url_for('org', org_id = organization.name) }}" class="btn bg-warning-subtle border-warning btn-sm">Org Page</a>	
 		  </p>

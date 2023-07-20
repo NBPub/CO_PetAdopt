@@ -1,6 +1,7 @@
 from pathlib import Path
-from quart import g, Quart, redirect, render_template, url_for, abort # , request
-from asyncio import sleep as a_sleep
+from quart import g, Quart, redirect, render_template, url_for, abort, \
+                  send_file #, request 
+from dotenv import load_dotenv
 
 from os import getenv#, unsetenv
 from datetime import datetime, timedelta
@@ -10,14 +11,12 @@ from data_intake import token_request, petfinder_request
 from table_maker import table_maker
 from graph_maker import graph_maker
 
-# setup
+    # SETUP
 app = Quart(__name__)
 app.logger.info('Establish logger')
 
 # Environmental Variables for API token, specify during build or in ".env"
-if __name__ == "__main__":
-    from dotenv import load_dotenv
-    load_dotenv()
+load_dotenv() 
 
 
 # App configuration: various directories, API settings
@@ -32,7 +31,7 @@ app.config.update({
     "SERVER_NAME": getenv('server_name', 'localhost:5000'),
 })
 
-    ## BACKGROUND / SCHEDULED TASKS 
+    ## BACKGROUND, DATA COLLECTION FUNCTIONS
 # API request and file save, perform on startup and when data is stale
 async def _fetch_data(startup):
     app.logger.info('Petfinder API requests . . .')
@@ -49,26 +48,29 @@ async def _fetch_data(startup):
         adopt, orgs = await petfinder_request(token, app.config["org_data"],
                                           app.config["pet_data"], 
                                           app.config['location'], app.logger)
-    # ensure data was made, should skip use data after this
+    # ensure data was made
     if adopt.empty or orgs.empty:
         app.logger.error('Error performing Petfinder API request(s)')
         return False
     return True
 
-# load saved data to memory
+# load saved data to memory, update if old
 async def _load_data():
     # organizations from JSON, adoptable pets from PARQUET
     org = pd.read_json(app.config["org_data"])
-    adopt = pd.read_parquet(app.config["pet_data"])
-    
+    adopt = pd.read_parquet(app.config["pet_data"])  
     # time saved ~ token['start_time'] more accurate, could write to file
-    updated = datetime.fromtimestamp(app.config["pet_data"].stat().st_mtime)   
+    updated = datetime.fromtimestamp(app.config["pet_data"].stat().st_mtime)     
+    # check data
+    await _check_data(updated)
+    
     return org, adopt, updated
+
 
 # make tables, graphs from data. utilize in templates. add more tasks later
 async def _use_data(fresh_data):
     if not fresh_data:
-        app.logger.warning('Data not updated, not updating graphs and tables.')
+        app.logger.warning('No new data, not updating graphs and tables.')
         return
     orgs, adopt, updated = await _load_data()
     app.logger.info('Creating tables, data exports . . .')
@@ -79,51 +81,45 @@ async def _use_data(fresh_data):
     await graph_maker(adopt.copy(), app.config["graphs"], updated, 
                       url_for('home', _external=True))
             
-# continuous background task, fetch data on first startup and when it gets stale
-async def data_update():   
-    while True:       
-        # startup, no data processed --> make data
-        if not app.config["org_data"].exists() and \
-        not app.config["pet_data"].exists():
-            app.logger.info('Application startup, first data request')
-            new_fetch = await _fetch_data(True)   
-            await _use_data(new_fetch)               
-            
-        # data exists --> check update time
-        _, _, updated = await _load_data()   
-        
-        # refresh data if over 2 hours old
-        if datetime.now() - updated > timedelta(hours = 2):
-            app.logger.info('Data check: refreshing old data')
-            new_fetch = await _fetch_data(False) 
-            await _use_data(new_fetch) 
-        else:
-           app.logger.info('Data check: up to date')
-        
-        # check every 10 minutes
-        await a_sleep(10*60)   
-        continue
+   
+# check data for staleness
+async def _check_data(updated):
+    app.logger.info('updated')
+    app.logger.info(updated.strftime('%x %X'))
+    app.logger.info('now')
+    app.logger.info(datetime.now().strftime('%x %X'))
+    
+    if not updated or datetime.now() - updated > timedelta(hours=3):
+        app.logger.info('Data check: refreshing old data') if updated else \
+        app.logger.info('Application startup, first data request')
+        success = await _fetch_data(False)    
+        await _use_data(success)
         
 
     # APPLICATION
-# load data on startup, check periodically
+# first API request on startup, save and use data, to be updated periodically
 @app.before_serving
 async def startup():
-    app.add_background_task(data_update)
+    # true first startup
+    if not app.config["org_data"].exists() and \
+    not app.config["pet_data"].exists(): 
+        await _check_data(None)
+    else:
+        # server restart, check data before loading
+        app.logger.info('Server restarting, checking last data update . . .')
+        _,_,updated = await _load_data()
+        await _check_data(updated)
     
-# load data on startup, check periodically
-@app.after_serving
-async def shutdown():
-    app.add_background_task(data_update)
-    
-# attach data to "G" object for servivng requests
+# attach data to "G" to serve requests
 @app.before_request
 async def attach_data(): 
     if not hasattr(g, "org") or not hasattr(g, "adopt") \
     or not hasattr(g, "updated"):
         g.org, g.adopt, g.updated = await _load_data()
 
-# home page
+
+    # Routes
+# Home Page, tabular breakdown, welcome, oldest listings / graphs / wordclouds
 @app.route("/")
 @app.route("/home")
 async def home():
@@ -137,11 +133,36 @@ async def home():
     return await render_template("home.html", org=org, updated=updated, 
                                  indicator=indicator, pets=adopt, 
                                  pet_count=pet_count)
-# all pet data, styled table
+
+# all pet data, styled table. link to downloads
 @app.route("/table")
 async def pet_table():
     updated = g.updated
     return await render_template("pet_table.html", updated=updated)
+
+# download pet data table, append update time to filename
+@app.route("/table/export/<extension>")
+async def download_table(extension):
+    updated = g.updated
+    extension = extension.lower()
+    if extension not in ['csv','html','xlsx','xml', 'parquet', 'html_f']:
+        abort(404, description="Filetype not available, valid extensions are: \
+CSV, HTML, XLSX, XML, and Parquet.")
+    
+    # Prepare file
+    if extension == 'html_f': # formatted HTML table
+        extension = 'html'
+        file = Path(app.root_path, 'templates', 'tables', 'all_pets_table.html')
+    elif extension == 'parquet':
+        file =  Path(app.root_path, 'data', 'adopt.parquet')
+    else:
+        file = Path(app.root_path, 'static', 'data_exports', f'adopt.{extension}')  
+    if not file.exists():
+        abort(404, description='Requested file is missing. Submit issue if \
+problem persists.')
+        
+    return await send_file(file, as_attachment=True, 
+    attachment_filename = f"adoptions_{updated.strftime('%xT%X')}.{extension}")
 
 # list of cats, option to filter by orgID    
 @app.route("/pets/cats", defaults={'org_id':None})
@@ -180,7 +201,7 @@ async def all_dogs(org_id):
 async def pet_page(pet_id):
     org, adopt, updated = g.org, g.adopt, g.updated
     if pet_id not in adopt.index:
-        abort(404)
+        abort(404, description="Specified PetID does not exist.")
     adopt = adopt.loc[pet_id,:]
     org = org.loc[adopt.orgID,:]
     return await render_template("pet_page.html", pet=adopt, petorg=org,
@@ -193,23 +214,19 @@ async def random_pet_page():
     choice = adopt.sample(1).index[0]
     return redirect(url_for('pet_page',pet_id=choice))
     
-    
 # list of adoption organizations  
 @app.route("/organizations")
 async def org_landing():
-    app.logger.info('INFO')
-    app.logger.warning('WARNING')
-    app.logger.critical('CRIT')
     org, updated = g.org, g.updated
     return await render_template("org_list.html", org=org, updated=updated)
 
-# organization page    
+# Organization Page    
 @app.route("/organization/<org_id>")
 async def org(org_id):
     org, adopt, updated = g.org, g.adopt, g.updated
     org_id = org_id.upper() if org_id else None
     if org_id not in org.index:
-        return redirect(url_for('org_landing'))
+        abort(404, description="Specified OrganizationID does not exist.")
     
     org = org.loc[org_id, :]
     cats = adopt[(adopt.orgID == org_id) & (adopt.species == 'Cat')]
@@ -219,16 +236,23 @@ async def org(org_id):
     del adopt
     return await render_template("org_page.html", org=org, dogs=dogs, cats=cats,
                                   updated=updated)
-# Register error handler(s)
+
+# ping page, keep server alive
+@app.route("/ping")
+async def ping_page():
+    return '=^..^='
+
+# Error handler(s)
 @app.errorhandler(404)
 async def error_page(e):
     return await render_template('error404.html', e=e), 404  
 
-    
+# if name == main, running in dev environment. debug mode
 if __name__ == "__main__":
     app.logger.setLevel(10)
     app.run(debug = True)
-else:
+# else setup logging for "production" Hypercorn deployment.
+else:   
     app.config.update({"SERVER_NAME": getenv('server_name', 'localhost:8000')})
     import logging
     hypercorn_logger = logging.getLogger('hypercorn.error')
@@ -236,4 +260,3 @@ else:
     hypercorn_logger.setLevel(20)
     app.logger.handlers = hypercorn_logger.handlers
     app.logger.setLevel(hypercorn_logger.level)
-    

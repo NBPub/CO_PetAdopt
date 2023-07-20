@@ -147,7 +147,7 @@
 					  </a>			
 					</div>
 				  </div> 
-				  <p class="fs-5 text-center">
+				  <p class="fs-5 text-center mt-2">
 					<a href="{{ pet.URL }}" class="btn bg-primary-subtle border-primary px-3 btn-sm">Adopt</a>	
 					<a href="{{ url_for('pet_page', pet_id = pet.name) }}" class="btn bg-info-subtle border-info btn-sm">Pet Page</a>
 					<a href="{{ url_for('org', org_id = pet.orgID) }}" class="btn bg-warning-subtle border-warning btn-sm">Org Page</a>
@@ -156,8 +156,9 @@
 				  <p class="card-text">{% if pet.description %}&nbsp;&nbsp;{{ pet.description.replace('amp;','')|safe }}{% endif %}
 					<br><span class="text-muted">
 					{% for col in ['spayed_neutered', 'declawed', 'shots_current', 'special_needs', 'house_trained'] %}
-					  {% if pet[col] %}• {{col}} {% endif %}
+					  {% if pet[col] %}• {{col.replace('_',' ') }} {% endif %}
 					{% endfor %}
+					</span>
 				  </p>		  
 				</div>
 			  </div>	  
@@ -167,15 +168,17 @@
 	</div>
   </div>
 	<footer class="d-flex flex-wrap justify-content-between align-items center border-top fixed-bottom bg-white" style="font-size:10pt;">
+	  <div class="d-none d-sm-block">
 	  <ul class="text-muted fw-bold justify-content-start ms-1 mt-2 list-unstyled">
 	    <li>
 		  Central Oregon Pet Adoptions
 		  <span class="fw-normal mx-3">Contact organizations directly for adoptions.</span>
 		</li>
 		<li><em class="fw-normal">Adoptable pets via <a href="https://www.petfinder.com/developers/v2/docs/">Petfinder API</a>.
-		  Data integration from <a href="https://rescuegroups.org/services/adoptable-pet-data-api/">RescueGroups.org</a> in progress.
+		  May augment with data from <a href="https://rescuegroups.org/services/adoptable-pet-data-api/">RescueGroups.org</a>
 		</em></li>
 	  </ul>
+	  </div>
 	  <a class="link-secondary text-center fw-bold justify-content-center mt-2 me-5" href="https://github.com/NBPub/CO_PetAdopt">
 		<img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" style="height:24px;"/><br>GPLv3</a>	  
 	  <img src="/static/favicon.png" class="justify-content-end mt-3 me-3" style="height:32px;"/>

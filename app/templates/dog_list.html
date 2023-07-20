@@ -1,5 +1,8 @@
 {% extends "base.html" %}
-{% block title %}Dog Adoptions{% endblock %}
+{% block title %}
+  Dog Adoptions
+  {% if org_id %} - {{ dogorg.loc[org_id,'name'] }} {% endif %}
+{% endblock %}
 {% block content %}
 
 <h1>
@@ -8,7 +11,18 @@
   <span class="badge rounded-pill border border-success text-success bg-success-subtle fs-4 ms-3">{{ dogs.shape[0] }}</span>
   <span class="fs-5 text-muted ms-3">{% if org_id %} {{ dogorg['name'].values[0] }} {% endif %}</span>
 </h1>
-<div class="mt-5 row bg-dark rounded">
+
+<div class="btn-group my-2">
+{% if org_id %}
+    <a href="{{ url_for('all_dogs') }}" title="{{ dogorg['name'].values[0] }}. Click to restore full list" class="btn btn-sm bg-info-subtle border-info fw-bold">{{ dogorg.index[0] }}</a>
+{% elif dogorg.index|length > 1 %}
+  {% for org in dogorg.index %} 
+    <a href="{{ url_for('all_dogs', org_id=org) }}" class="btn btn-sm bg-warning-subtle border-warning" title="{{ dogorg.loc[org,'name'] }}">{{ org }}</a>
+  {% endfor %}
+{% endif %}
+</div>
+
+<div class="mt-3 row bg-dark rounded">
   <div class="row g-2 g-lg-3">  
   {% for i,dog in dogs.iterrows() %}
     <div class="col-xs-1 col-md-4 col-xl-3 mb-sm-0">
@@ -60,7 +74,7 @@
 			  </a>			
 			</div>
 		  </div> 
-		  <p class="fs-5 text-center">
+		  <p class="fs-5 text-center mt-3">
 		    <a href="{{ dog.URL }}" class="btn bg-primary-subtle border-primary btn-sm px-3">Adopt</a>	
 			<a href="{{ url_for('pet_page', pet_id = dog.name) }}" class="btn bg-info-subtle border-info btn-sm">Pet Page</a>
 			<a href="{{ url_for('org', org_id = dog.orgID) }}" class="btn bg-warning-subtle border-warning btn-sm">Org Page</a>
@@ -69,8 +83,9 @@
 		  <p class="card-text">{% if dog.description %}&nbsp;&nbsp;{{ dog.description.replace('amp;','')|safe }}{% endif %}
 		    <br><span class="text-muted">
 			{% for col in ['spayed_neutered', 'declawed', 'shots_current', 'special_needs', 'house_trained'] %}
-			  {% if dog[col] %}• {{col}} {% endif %}
+			  {% if dog[col] %}• {{col.replace('_',' ')}} {% endif %}
 			{% endfor %}
+			</span>
 		  </p>		  
 	    </div>
 	  </div>	  
