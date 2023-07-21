@@ -21,7 +21,7 @@ async def age_count(adopt, updated, params, path, url_stamp):
         plt.title('Pets by Age', color='lightgreen')
         plt.text(plt.xlim()[1], plt.ylim()[1]-0.3, updated, 
                  color='khaki', ha='right', va='top', size='small')
-        plt.text(np.average(plt.xlim()), plt.ylim()[1]-0.3, url_stamp, 
+        plt.text(np.average(plt.xlim())+.1, plt.ylim()[1]-0.3, url_stamp, 
                  color='salmon', ha='right', va='top', size='small')
         plt.savefig(Path(path,'home_count_vs_age.png'))
         plt.close()    

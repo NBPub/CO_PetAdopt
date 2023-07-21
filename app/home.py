@@ -220,6 +220,7 @@ async def org_landing():
 @app.route("/organization/<org_id>")
 async def org(org_id):
     org, adopt, updated = g.org, g.adopt, g.updated
+    adopt['updated'] = pd.to_datetime(adopt.updated)
     org_id = org_id.upper() if org_id else None
     if org_id not in org.index:
         abort(404, description="Specified OrganizationID does not exist.")
