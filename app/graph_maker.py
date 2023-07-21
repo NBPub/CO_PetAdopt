@@ -82,12 +82,13 @@ async def tag_cloud(adopt, updated, font, path, url_stamp):
     tags = []
     for pet_tags in adopt.tags:
         words = pet_tags.split(' | ')
-        tags.extend([word.replace(' ','') for word in words if word])
+        tags.extend([word.lstrip().rstrip().capitalize() \
+                    for word in words if word])
     
     tags = tags*10
-    tags = ' '.join(tags)   
+    tags = '. '.join(tags)   
     plt.figure(figsize=(10,10), facecolor='#696969')
-    wordcloud = WordCloud(colormap='viridis_r',min_font_size=12, 
+    wordcloud = WordCloud(colormap='viridis_r',min_font_size=10, 
                           background_color='#696969', width=800, height=800, 
                           font_path=str(font), prefer_horizontal=0.7)
     wordcloud.generate(tags)
@@ -128,12 +129,11 @@ async def color_clouds(adopt, updated, font, path, url_stamp):
         plt.close()    
 
 
-
 async def graph_maker(adopt, save_path, data_updated, url_stamp):
     
     # folder in static directory
     save_path.mkdir(exist_ok=True)
-    url_stamp = url_stamp[:-4]
+    url_stamp = url_stamp[:-5]
     
     # style settings
     sns.set_style('darkgrid')

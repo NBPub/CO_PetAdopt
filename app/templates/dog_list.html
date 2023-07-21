@@ -38,7 +38,7 @@
 				{% for pic in dog.pics_thumb.split(' | ') %}
 				  <div {% if loop.index == 1 %} class="carousel-item active" {% else %} class="carousel-item"{% endif %}>
 					<a href="{{ dog.pics_full.split(' | ')[loop.index-1] }}" target="_blank">
-					  <img src="{{ pic }}" class="d-block w-100 rounded"  title="{{ dog['name'] }} {{ loop.index }}. Click to open in a new tab" />
+					  <img src="{{ pic }}" class="d-block w-100"  title="{{ dog['name'] }} {{ loop.index }}. Click to open in a new tab" />
 					</a>
 				  </div>
 				{% endfor %}
@@ -60,6 +60,7 @@
 		  </a>
 		{% endif %}
 	    <div class="card-body">
+		  <span class="text-muted fs-6 fw-bold float-end"> {{ dog['updated'].strftime('%x') }}</span>
 		  <h5 class="card-title text-center text-decoration-underline"> {{ dog['name'] }}</h5>
 		  <div class="row mb-2">
 		    <div class="col-8">

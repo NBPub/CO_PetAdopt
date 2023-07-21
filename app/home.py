@@ -166,6 +166,7 @@ problem persists.')
 async def all_cats(org_id):
     org, adopt, updated = g.org, g.adopt, g.updated
     adopt = adopt[adopt.species == 'Cat']
+    adopt['updated'] = pd.to_datetime(adopt.updated)
     
     org_id = org_id.upper() if org_id and org_id.upper() in adopt.orgID.values\
                             else None
@@ -182,6 +183,7 @@ async def all_cats(org_id):
 async def all_dogs(org_id):
     org, adopt, updated = g.org, g.adopt, g.updated
     adopt = adopt[adopt.species == 'Dog']
+    adopt['updated'] = pd.to_datetime(adopt.updated)
     
     org_id = org_id.upper() if org_id and org_id.upper() in adopt.orgID.values\
                             else None
@@ -241,8 +243,13 @@ async def ping_page():
 
 # Error handler(s)
 @app.errorhandler(404)
-async def error_page(e):
+async def error_page_404(e):
     return await render_template('error404.html', e=e), 404  
+
+@app.errorhandler(500)
+async def error_page_500(e):
+    return await render_template('error500.html', e=e), 404  
+
 
 # if name == main, running in dev environment. debug mode
 if __name__ == "__main__":

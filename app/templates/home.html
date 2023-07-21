@@ -110,7 +110,7 @@
 						{% for pic in pet.pics_thumb.split(' | ') %}
 						  <div {% if loop.index == 1 %} class="carousel-item active" {% else %} class="carousel-item"{% endif %}>
 							<a href="{{ pet.pics_full.split(' | ')[loop.index-1] }}" target="_blank">
-							  <img src="{{ pic }}" class="d-block w-100 rounded"  title="{{ pet['name'] }} {{ loop.index }}. Click to open in a new tab" />
+							  <img src="{{ pic }}" class="d-block w-100"  title="{{ pet['name'] }} {{ loop.index }}. Click to open in a new tab" />
 							</a>
 						  </div>
 						{% endfor %}
@@ -132,7 +132,7 @@
 				  </a>
 				{% endif %}
 				<div class="card-body">
-				  <p class="text-danger fs-6 fw-bold text-end"> {{ pet['updated'].strftime('%x %X') }}</p>
+				  <span class="text-danger fs-6 fw-bold float-end"> {{ pet['updated'].strftime('%x') }}</span>
 				  <h5 class="card-title text-center text-decoration-underline">{{ pet['name'] }}</h5>
 				  <div class="row mb-2">
 					<div class="col-8">

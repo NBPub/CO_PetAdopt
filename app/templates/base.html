@@ -11,7 +11,21 @@
 	<!-- Page Specific CSS -->
 	<style>
 	.im-flip {transition:1s;}
-	.im-flip:hover {transform:rotateY(180deg);}
+	.im-flip:hover {transform:rotate(-0.5turn);}
+	.dice:hover { animation:shake 0.5s; animation-iteration-count: infinite; }
+	@keyframes shake {
+	  0% { transform: translate(1px, 1px) rotate(0deg); }
+	  10% { transform: translate(-1px, -1px) rotate(-0.3turn); }
+	  20% { transform: translate(-2px, 0px) rotate(0.3turn); }
+	  30% { transform: translate(2px, 1px) rotate(0deg); }
+	  40% { transform: translate(1px, -1px) rotate(0.5turn); }
+	  50% { transform: translate(-1px, 1px) rotate(-0.5deg); }
+	  60% { transform: translate(-2px, 1px) rotate(0deg); }
+	  70% { transform: translate(2px, 1px) rotate(-0.3deg); }
+	  80% { transform: translate(-1px, -1px) rotate(0.3deg); }
+	  90% { transform: translate(1px, 1px) rotate(0deg); }
+	  100% { transform: translate(1px, -1px) rotate(-0.3deg); }
+	}	
 {% block CSS %}{% endblock %}
     </style>
   </head>
@@ -30,11 +44,11 @@
 			  <a class="nav-link" href="{{ url_for('org_landing') }}">Organizations</a>
 			</li>	
 			<li class="nav-item border-end"></li>
-			<li class="nav-item  im-flip">
+			<li class="nav-item">
 			  <a class="nav-link mx-2" href="{{ url_for('all_cats', org_id=None) }}" title="Meow!">&#128008;</a>
 			</li>
 			<li class="nav-item border-end"></li>
-			<li class="nav-item  im-flip">
+			<li class="nav-item">
 			  <a class="nav-link mx-2" href="{{ url_for('all_dogs', org_id=None) }}" title="Bark!">&#128054;</a>
 			</li>	
 			<li class="nav-item border-end"></li>			
@@ -42,7 +56,7 @@
 			  <a class="nav-link" href="{{ url_for('pet_table') }}" title="All pets and data">Adoption Table</a>
 			</li>	
 			<li class="nav-item border-end"></li>
-			<li class="nav-item  im-flip">
+			<li class="nav-item dice">
 			  <a class="nav-link mx-2" href="{{ url_for('random_pet_page') }}" title="Random pet page">&#127922;</a>
 			</li>							
 		  </ul>

@@ -4,9 +4,11 @@
 	h1 {margin-inline-end:30vw;}
 	#logo {position:relative;top:-75px;}
 	hr {width:120vw;position:relative;right:10vw;}
+	.im-stretch {transition: all 0.2s ease-in-out;}
+	.im-stretch:hover {transform:translateX(3em) scaleX(1.5) ;}
 {% endblock %}
 {% block content %}
-
+<!--  -->
 <h1>
   <span class="float-end text-muted fs-6">{{ updated.strftime('%x %X') }}</span>
   {{ org["name"] }}
@@ -92,26 +94,30 @@
     </div>
     <div class="col-xs-1 col-md-5 fw-bold">
 	  {% if cats %}
-	    <ol><a href="{{ url_for('all_cats',org_id=org.name) }}" class="fs-3 ms-5 text-decoration-none" title="Visual list">&#128008;</a>    
-	    {% for ind,cat in cats.items() %}
-		  <li>
-		    <a href="{{ url_for('pet_page', pet_id=ind) }}">{{ cat[0] }}</a>
-			<span class="text-secondary fw-normal ms-2"> {{ cat[1] }}</span>
-		  </li>
-		{% endfor %}
-	  </ol>{% endif %}	  	    
+	    <ol>
+		  <div class="im-stretch"><a href="{{ url_for('all_cats',org_id=org.name) }}" class="fs-3 ms-5 text-decoration-none" title="Visual list">&#128008;</a></div>
+	      {% for ind,cat in cats.items() %}
+		    <li>
+		      <a href="{{ url_for('pet_page', pet_id=ind) }}">{{ cat[0] }}</a>
+		  	  <span class="text-secondary fw-normal ms-2"> {{ cat[1] }}</span>
+		    </li>
+		  {% endfor %}
+	    </ol>
+	  {% endif %}	  	    
 	</div>
 	<div class="col-1"></div>
     <div class="col-xs-1 col-md-5 fw-bold">
 	  {% if dogs %}
-	    <ol><a href="{{ url_for('all_dogs',org_id=org.name) }}" class="fs-3 ms-5 text-decoration-none" title="Visual list">&#128054;</a>
-	    {% for ind,dog in dogs.items() %}
-		  <li>
-		    <a href="{{ url_for('pet_page', pet_id=ind) }}">{{ dog[0] }}</a>
-			<span class="text-secondary fw-normal ms-2"> {{ dog[1] }}</span>
-		  </li>
-		{% endfor %}
-	  </ol>{% endif %}	
+	    <ol>
+		  <div class="im-stretch"><a href="{{ url_for('all_dogs',org_id=org.name) }}" class="fs-3 ms-5 text-decoration-none" title="Visual list">&#128054;</a></div>
+	      {% for ind,dog in dogs.items() %}
+		    <li>
+		      <a href="{{ url_for('pet_page', pet_id=ind) }}">{{ dog[0] }}</a>
+			  <span class="text-secondary fw-normal ms-2"> {{ dog[1] }}</span>
+		    </li>
+		  {% endfor %}
+	    </ol>
+	  {% endif %}	
 	</div>	
   </div>
 {% endblock %}
