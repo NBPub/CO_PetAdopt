@@ -2,11 +2,21 @@
 
 Local, up-to-date adoptable pet information.
 
-***IN PROGRESS***
+*** ReadMe IN PROGRESS***
 
 Python Quart / Hypercorn project deployed on Render.
 
+### next
+
+ - build docker containers via github
+   - deploy containers directly, startup should be a lot faster
+ - fix/figure out data updates and persistence
+ - log organization history: adoptable pets over time
+   - add graph to organization page
+
 ### alpha deployment
+
+*notes for deployment on free hosting services*
 
 **Build**
 
