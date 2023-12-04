@@ -20,7 +20,7 @@ async def home_table(orgs, adopt, path):
 .background_gradient(subset=[f'Cats &#128008; {sums["cat"]}'], cmap='Purples', 
                      vmin=0, low=0.1)\
 .format(lambda v: 
-  f'<a class="btn btn-sm btn-primary"\
+  f'<a class="btn btn-sm btn-primary" target="_blank"\
     href="{orgs[orgs["name"]==v].website.values[0]}">{v}\
     [{orgs[orgs["name"]==v].address.values[0]}]</a>\
     ',
@@ -46,7 +46,7 @@ async def big_table(orgs, adopt, path, table_url):
         f'<a class="btn btn-sm btn-info" href="{url_for("org", org_id=v)}">{v}</a>', 
         subset='orgID')\
 .format(lambda v: 
-        f'<a href="{orgs[orgs["name"]==v].website.values[0]}">{v}</a>', 
+        f'<a target="_blank" href="{orgs[orgs["name"]==v].website.values[0]}">{v}</a>', 
         subset='org')\
 .format(lambda v: 
         f'<a class="btn btn-sm btn-primary" href="{v}">Adopt</a>', subset='URL')\

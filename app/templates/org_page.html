@@ -20,19 +20,19 @@
     <a class="me-3 fw-bold" href="mailto:{{ org.email }}">{{ org.email }}</a>
 	  {% if org.phone %}<b>{{ org.phone }}</b>{% endif %}
 	  <span class="mt-2">
-	    <a href="{{ org.website }}" class="btn bg-primary-subtle border-primary btn-sm mx-2 fw-bold">website</a>
+	    <a href="{{ org.website }}" target="_blank" class="btn bg-primary-subtle border-primary btn-sm mx-2 fw-bold">website</a>
 		<div class="btn-group p-1" style="background-color:aquamarine;">
 	    {% if org.social_media['facebook'] %}
-		  <a class="mx-1" href="{{ org.social_media['facebook'] }}"><img src="https://cdn2.iconfinder.com/data/icons/social-media-2285/512/1_Facebook_colored_svg_copy-24.png" /></a>	  
+		  <a class="mx-1" target="_blank" href="{{ org.social_media['facebook'] }}"><img src="https://cdn2.iconfinder.com/data/icons/social-media-2285/512/1_Facebook_colored_svg_copy-24.png" /></a>	  
 		{% endif %}
 	    {% if org.social_media['twitter'] %}
-		  <a class="mx-1" href="{{ org.social_media['twitter'] }}"><img src="https://cdn2.iconfinder.com/data/icons/social-media-2285/512/1_Twitter_colored_svg-24.png" /></a>
+		  <a class="mx-1" target="_blank" href="{{ org.social_media['twitter'] }}"><img src="https://cdn2.iconfinder.com/data/icons/social-media-2285/512/1_Twitter_colored_svg-24.png" /></a>
 		{% endif %}
 	    {% if org.social_media['youtube'] %}
-		  <a class="mx-1" href="{{ org.social_media['youtube'] }}"><img src="https://cdn2.iconfinder.com/data/icons/social-media-2285/512/1_Youtube_colored_svg-24.png" /></a>
+		  <a class="mx-1" target="_blank" href="{{ org.social_media['youtube'] }}"><img src="https://cdn2.iconfinder.com/data/icons/social-media-2285/512/1_Youtube_colored_svg-24.png" /></a>
 		{% endif %}
 	    {% if org.social_media['instagram'] %}
-		  <a class="mx-1" href="{{ org.social_media['instagram'] }}"><img src="https://cdn2.iconfinder.com/data/icons/social-media-2285/512/1_Instagram_colored_svg_1-24.png" /></a>
+		  <a class="mx-1" target="_blank" href="{{ org.social_media['instagram'] }}"><img src="https://cdn2.iconfinder.com/data/icons/social-media-2285/512/1_Instagram_colored_svg_1-24.png" /></a>
 		{% endif %}	
 		</div>
 		{% if org.address %}
@@ -80,7 +80,7 @@
 	<div class="col-xs-1 col-md-5">
       <h3>Policy, 
 	    {% if 'url' in org.adoption %}
-		  <a href="{{ org.adoption['url'] }}" class="text-info text-decoration-none">Form</a>
+		  <a href="{{ org.adoption['url'] }}" target="_blank" class="text-info text-decoration-none">Form</a>
 		{% else %}
 		  Form
 		{% endif %}

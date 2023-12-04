@@ -75,7 +75,7 @@
 			</div>
 		  </div>
 		  <p class="fs-5 text-center">
-		    <a href="{{ cat.URL }}" class="btn bg-primary-subtle border-primary px-3 btn-sm">Adopt</a>	
+		    <a href="{{ cat.URL }}" target="_blank" class="btn bg-primary-subtle border-primary px-3 btn-sm">Adopt</a>	
 			<a href="{{ url_for('pet_page', pet_id = cat.name) }}" class="btn bg-info-subtle border-info btn-sm">Pet Page</a>
 			<a href="{{ url_for('org', org_id = cat.orgID) }}" class="btn bg-warning-subtle border-warning btn-sm">Org Page</a>
 		  </p>

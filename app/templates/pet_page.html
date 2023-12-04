@@ -24,7 +24,7 @@
   <p class="text-success text-end fs-6"> {{ pet.updated[:-5].replace('T',' ') }}</p>
   <div class="row text-center mb-3 fs-5 fw-bold">
     <p>
-	  <a class="btn bg-info-subtle border-info text-dark m-1" href="{{ petorg.website }}">{{ pet.org }}</a> 
+	  <a class="btn bg-info-subtle border-info text-dark m-1" href="{{ petorg.website }}" target="_blank">{{ pet.org }}</a> 
 	  <a class="btn bg-warning-subtle border-warning text-dark" href="{{ url_for('org', org_id=pet.orgID) }}">Organization</a>
 	</p>
 	<p class="text-warning">{{ pet.tags.replace(' | ',', ') }}</p>
@@ -68,7 +68,7 @@
     <div class="col-xs-1 col-md-4">
 	  <p class="fs-4">
 	    {% if pet.description %}&emsp;{{ pet.description.replace('amp;','')|safe}}{% else %}No Description!{% endif %}<br>    
-		<a href="{{ pet.URL }}" class="btn bg-primary-subtle border-primary text-dark m-3 fw-bold">see more</a>	
+		<a href="{{ pet.URL }}" target="_blank" class="btn bg-primary-subtle border-primary text-dark m-3 fw-bold">see more</a>	
 		<ul class="my-5"><span class="fw-bold fs-5">Attributes</span>
 		  <li>{% if pet.spayed_neutered %}&#10004;{% else %}&#10060;{% endif %} Spayed/Neutered</li>
 		  <li>{% if pet.declawed %}&#10004;{% else %}&#10060;{% endif %} Declawed</li>
